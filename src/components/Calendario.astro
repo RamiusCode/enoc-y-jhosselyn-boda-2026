@@ -1,0 +1,609 @@
+---
+// Calendario.astro
+---
+
+<section class="relative w-full py-12 px-6 overflow-hidden">
+    <!-- ═══ PARTÍCULAS FLOTANTES ═══ -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+            class="particula-dorada"
+            style="left: 8%;  top: 15%; animation-delay: 0s;"
+        >
+        </div>
+        <div
+            class="particula-dorada"
+            style="left: 88%; top: 25%; animation-delay: 1.5s;"
+        >
+        </div>
+        <div
+            class="particula-dorada"
+            style="left: 12%; top: 75%; animation-delay: 3s;"
+        >
+        </div>
+        <div
+            class="particula-dorada"
+            style="left: 92%; top: 60%; animation-delay: 2s;"
+        >
+        </div>
+        <div
+            class="particula-dorada"
+            style="left: 50%; top: 10%; animation-delay: 0.8s;"
+        >
+        </div>
+        <div
+            class="particula-dorada"
+            style="left: 70%; top: 80%; animation-delay: 2.5s;"
+        >
+        </div>
+    </div>
+
+    <!-- ═══ CONTENEDOR PRINCIPAL ═══ -->
+    <div
+        class="max-w-sm lg:max-w-lg mx-auto relative z-10"
+        id="contenedor-calendario"
+    >
+        <!-- MARCO GLASSMORPHISM -->
+        <div
+            class="backdrop-blur-sm rounded-3xl border-2 p-6 md:p-10 shadow-sm relative overflow-hidden"
+            style="border-color: rgba(104, 68, 154, 0.25);"
+        >
+            <!-- Brillos ambientales -->
+            <div
+                class="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl animate-pulse-slow"
+                style="background: radial-gradient(circle, rgba(104,68,154,0.12) 0%, transparent 70%);"
+            >
+            </div>
+            <div
+                class="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl animate-pulse-slow"
+                style="background: radial-gradient(circle, rgba(156,122,46,0.10) 0%, transparent 70%); animation-delay: 1s;"
+            >
+            </div>
+
+            <!-- CONTENIDO INTERIOR -->
+            <div class="relative z-10" id="tarjeta-calendario">
+                <!-- ── TÍTULO MES CON LÍNEAS DECORATIVAS ── -->
+                <div
+                    class="flex items-center justify-center gap-4 mb-6"
+                    id="titulo-mes-container"
+                >
+                    <div
+                        class="flex-1 h-px"
+                        id="linea-izq"
+                        style="background: linear-gradient(to right, transparent, rgba(156,122,46,0.6));"
+                    >
+                    </div>
+                    <h3
+                        class="font-great-vibes text-4xl md:text-5xl font-normal whitespace-nowrap"
+                        style="color: #9C7A2E;"
+                        id="nombre-mes"
+                    >
+                        <!-- JS -->
+                    </h3>
+                    <div
+                        class="flex-1 h-px"
+                        id="linea-der"
+                        style="background: linear-gradient(to left, transparent, rgba(156,122,46,0.6));"
+                    >
+                    </div>
+                </div>
+
+                <!-- ── AÑO ── -->
+                <p
+                    class="text-center tracking-[0.3em] uppercase text-xs mb-6"
+                    style="color: #68449a;"
+                    id="anio-texto"
+                >
+                    <!-- JS -->
+                </p>
+
+                <!-- ── DÍAS DE LA SEMANA ── -->
+                <div class="grid grid-cols-7 gap-1 mb-3">
+                    {
+                        ["D", "L", "M", "M", "J", "V", "S"].map((d) => (
+                            <div
+                                class="text-center font-charm text-sm md:text-base font-bold"
+                                style="color: rgba(104,68,154,0.55);"
+                            >
+                                {d}
+                            </div>
+                        ))
+                    }
+                </div>
+
+                <!-- ── DÍAS DEL MES ── -->
+                <div class="grid grid-cols-7 gap-1" id="dias-container">
+                    <!-- JS -->
+                </div>
+
+                <!-- ── PUNTO DECORATIVO ── -->
+                <div class="flex justify-center mt-6">
+                    <div
+                        class="w-1.5 h-1.5 rounded-full"
+                        style="background: rgba(104,68,154,0.35);"
+                    >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- 🎨 ESTILOS                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <style>
+        /* Partículas - alterna morado y dorado */
+        .particula-dorada {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #9c7a2e 0%, transparent 70%);
+            border-radius: 50%;
+            animation: flotar 6s ease-in-out infinite;
+            opacity: 0.4;
+        }
+        .particula-dorada:nth-child(even) {
+            background: radial-gradient(circle, #68449a 0%, transparent 70%);
+        }
+        @keyframes flotar {
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-30px) translateX(15px);
+                opacity: 0.6;
+            }
+        }
+
+        /* Pulso lento */
+        @keyframes pulse-slow {
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        /* Día especial */
+        #dia-especial {
+            box-shadow: 0 6px 20px rgba(104, 68, 154, 0.45);
+            position: relative;
+        }
+        #dia-especial::after {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        /* Hover días */
+        .dia-calendario:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- 🎬 SCRIPTS                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <script>
+        import { gsap } from "gsap";
+        import { ScrollTrigger } from "gsap/ScrollTrigger";
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ⭐ CONFIGURA AQUÍ LA FECHA DE LA BODA ⭐
+        const DIA_ESPECIAL = 28;
+        const MES_ESPECIAL = 3; // 1-12
+        const AÑO_ESPECIAL = 2026;
+
+        const NOMBRES_MESES = [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre",
+        ];
+
+        function generarCalendario() {
+            document.getElementById("nombre-mes").textContent =
+                NOMBRES_MESES[MES_ESPECIAL - 1];
+            document.getElementById("anio-texto").textContent = AÑO_ESPECIAL;
+
+            const primerDia = new Date(
+                AÑO_ESPECIAL,
+                MES_ESPECIAL - 1,
+                1,
+            ).getDay();
+            const ultimoDia = new Date(AÑO_ESPECIAL, MES_ESPECIAL, 0).getDate();
+
+            const contenedor = document.getElementById("dias-container");
+            contenedor.innerHTML = "";
+
+            // Espacios vacíos
+            for (let i = 0; i < primerDia; i++) {
+                contenedor.appendChild(document.createElement("div"));
+            }
+
+            // Días
+            for (let dia = 1; dia <= ultimoDia; dia++) {
+                const div = document.createElement("div");
+                if (dia === DIA_ESPECIAL) {
+                    // Día especial: gradiente morado → dorado
+                    div.className =
+                        "aspect-square flex items-center justify-center rounded-lg shadow-xl dia-calendario";
+                    div.id = "dia-especial";
+                    div.style.background =
+                        "linear-gradient(135deg, #68449a 0%, #9C7A2E 100%)";
+                    div.innerHTML = `<span class="font-charm text-2xl md:text-3xl text-white font-bold">${dia}</span>`;
+                } else {
+                    div.className =
+                        "aspect-square flex items-center justify-center rounded-lg transition-all dia-calendario";
+                    div.innerHTML = `<span class="font-charm text-base md:text-lg" style="color: rgba(104,68,154,0.75);">${dia}</span>`;
+                    // Hover via JS para no depender de clases dinámicas
+                    div.addEventListener(
+                        "mouseenter",
+                        () => (div.style.background = "rgba(104,68,154,0.08)"),
+                    );
+                    div.addEventListener(
+                        "mouseleave",
+                        () => (div.style.background = ""),
+                    );
+                }
+                contenedor.appendChild(div);
+            }
+        }
+
+        const initCalendario = () => {
+            console.log("📅 Iniciando Calendario...");
+
+            generarCalendario();
+
+            // ── Estado inicial ──
+            gsap.set("#contenedor-calendario", {
+                opacity: 0,
+                y: 50,
+                scale: 0.95,
+            });
+            gsap.set("#tarjeta-calendario", { opacity: 0, y: 20 });
+            gsap.set("#linea-izq", { opacity: 0, scaleX: 0 });
+            gsap.set("#linea-der", { opacity: 0, scaleX: 0 });
+            gsap.set("#titulo-mes-container h3", { opacity: 0, scale: 0.9 });
+            gsap.set("#anio-texto", { opacity: 0 });
+            gsap.set(".dia-calendario", { opacity: 0, scale: 0.8 });
+
+            gsap.set("#flor-cal-left", {
+                opacity: 0,
+                x: -40,
+                rotation: -8,
+                scale: 0.9,
+            });
+            gsap.set("#flor-cal-right", {
+                opacity: 0,
+                x: 40,
+                rotation: 8,
+                scaleX: -0.9,
+                scaleY: 0.9,
+            });
+            gsap.set("#hoja-cal-left", {
+                opacity: 0,
+                scale: 0,
+                rotation: -6,
+                transformOrigin: "bottom center",
+            });
+            gsap.set("#hoja-cal-right", {
+                opacity: 0,
+                scaleX: 0,
+                scaleY: 0,
+                rotation: 6,
+                transformOrigin: "bottom center",
+            });
+
+            // ── ScrollTrigger ──
+            ScrollTrigger.create({
+                trigger: "#contenedor-calendario",
+                start: "top 75%",
+                end: "top 20%",
+
+                onEnter: () => {
+                    const tl = gsap.timeline();
+
+                    tl.to(
+                        "#contenedor-calendario",
+                        {
+                            opacity: 1,
+                            y: 0,
+                            scale: 1,
+                            duration: 1.6,
+                            ease: "power3.out",
+                        },
+                        0,
+                    )
+                        .to(
+                            "#flor-cal-left",
+                            {
+                                opacity: 0.75,
+                                x: 0,
+                                rotation: -3,
+                                scale: 1,
+                                duration: 2.8,
+                                ease: "sine.out",
+                            },
+                            0,
+                        )
+                        .to(
+                            "#flor-cal-right",
+                            {
+                                opacity: 0.75,
+                                x: 0,
+                                rotation: 3,
+                                scaleX: -1,
+                                scaleY: 1,
+                                duration: 2.8,
+                                ease: "sine.out",
+                            },
+                            0.05,
+                        )
+                        .to(
+                            "#hoja-cal-left",
+                            {
+                                opacity: 0.7,
+                                scale: 0.9,
+                                rotation: -3,
+                                duration: 2.2,
+                                ease: "sine.out",
+                            },
+                            0.1,
+                        )
+                        .to(
+                            "#hoja-cal-right",
+                            {
+                                opacity: 0.7,
+                                scaleX: -0.9,
+                                scaleY: 0.9,
+                                rotation: 3,
+                                duration: 2.2,
+                                ease: "sine.out",
+                            },
+                            0.15,
+                        )
+                        .to(
+                            "#tarjeta-calendario",
+                            {
+                                opacity: 1,
+                                y: 0,
+                                duration: 1,
+                                ease: "power2.out",
+                            },
+                            0.8,
+                        )
+                        .to(
+                            "#linea-izq, #linea-der",
+                            {
+                                opacity: 1,
+                                scaleX: 1,
+                                duration: 0.6,
+                                ease: "power2.out",
+                            },
+                            1.0,
+                        )
+                        .to(
+                            "#titulo-mes-container h3",
+                            {
+                                opacity: 1,
+                                scale: 1,
+                                duration: 0.6,
+                                ease: "back.out(1.3)",
+                            },
+                            1.2,
+                        )
+                        .to(
+                            "#anio-texto",
+                            { opacity: 1, duration: 0.4, ease: "power2.out" },
+                            1.4,
+                        )
+                        .to(
+                            ".dia-calendario",
+                            {
+                                opacity: 1,
+                                scale: 1,
+                                duration: 0.4,
+                                stagger: 0.02,
+                                ease: "back.out(1.2)",
+                            },
+                            1.4,
+                        );
+
+                    // Movimientos continuos - flores
+                    gsap.to("#flor-cal-left", {
+                        y: -15,
+                        x: -8,
+                        rotation: -12,
+                        duration: 3,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 3,
+                    });
+                    gsap.to("#flor-cal-right", {
+                        y: -12,
+                        x: 8,
+                        rotation: 12,
+                        duration: 3.3,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 3.2,
+                    });
+
+                    // Movimientos continuos - hojas
+                    gsap.to("#hoja-cal-left", {
+                        y: -18,
+                        rotation: -15,
+                        duration: 3.5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 3.3,
+                    });
+                    gsap.to("#hoja-cal-right", {
+                        y: -16,
+                        rotation: 15,
+                        duration: 3.8,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 3.5,
+                    });
+
+                    // Respiración hojas
+                    gsap.to("#hoja-cal-left", {
+                        scale: 0.8,
+                        duration: 4,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 4,
+                    });
+                    gsap.to("#hoja-cal-right", {
+                        scaleX: -0.8,
+                        scaleY: 0.8,
+                        duration: 4.5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 4.3,
+                    });
+
+                    // Brisa horizontal flores
+                    gsap.to("#flor-cal-left", {
+                        x: -12,
+                        duration: 5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 4.5,
+                    });
+                    gsap.to("#flor-cal-right", {
+                        x: 12,
+                        duration: 5.5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut",
+                        delay: 4.8,
+                    });
+
+                    // Pulso día especial
+                    gsap.to("#dia-especial", {
+                        scale: 1.05,
+                        duration: 2.5,
+                        ease: "sine.inOut",
+                        yoyo: true,
+                        repeat: -1,
+                        delay: 2,
+                    });
+                },
+
+                onLeaveBack: () => {
+                    gsap.killTweensOf(
+                        "#flor-cal-left, #flor-cal-right, #hoja-cal-left, #hoja-cal-right, #dia-especial",
+                    );
+
+                    const tl = gsap.timeline();
+                    tl.to("#tarjeta-calendario", {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.3,
+                        ease: "power2.in",
+                    })
+                        .to(
+                            "#contenedor-calendario",
+                            {
+                                opacity: 0,
+                                y: 50,
+                                scale: 0.95,
+                                duration: 0.5,
+                                ease: "power2.in",
+                            },
+                            "<",
+                        )
+                        .to(
+                            "#flor-cal-left",
+                            {
+                                opacity: 0,
+                                x: -40,
+                                duration: 1,
+                                ease: "sine.in",
+                            },
+                            "<",
+                        )
+                        .to(
+                            "#flor-cal-right",
+                            { opacity: 0, x: 40, duration: 1, ease: "sine.in" },
+                            "<",
+                        )
+                        .to(
+                            "#hoja-cal-left, #hoja-cal-right",
+                            {
+                                opacity: 0,
+                                scale: 0,
+                                duration: 0.8,
+                                ease: "sine.in",
+                            },
+                            "<",
+                        )
+                        .set("#flor-cal-left", {
+                            rotation: -8,
+                            scale: 0.9,
+                            x: -40,
+                            y: 0,
+                        })
+                        .set("#flor-cal-right", {
+                            rotation: 8,
+                            scaleX: -0.9,
+                            scaleY: 0.9,
+                            x: 40,
+                            y: 0,
+                        })
+                        .set("#hoja-cal-left", { rotation: -6, scale: 0, y: 0 })
+                        .set("#hoja-cal-right", {
+                            scaleX: 0,
+                            scaleY: 0,
+                            rotation: 6,
+                            y: 0,
+                        })
+                        .set("#linea-izq, #linea-der", {
+                            opacity: 0,
+                            scaleX: 0,
+                        })
+                        .set("#titulo-mes-container h3", {
+                            opacity: 0,
+                            scale: 0.9,
+                        })
+                        .set("#anio-texto", { opacity: 0 })
+                        .set(".dia-calendario", { opacity: 0, scale: 0.8 });
+                },
+            });
+
+            console.log("📅✨ ¡Calendario listo!");
+        };
+
+        document.addEventListener("DOMContentLoaded", initCalendario);
+        document.addEventListener("astro:page-load", initCalendario);
+    </script>
+</section>
